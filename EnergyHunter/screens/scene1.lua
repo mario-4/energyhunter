@@ -11,45 +11,49 @@ local scene = composer.newScene()
 
 -- -------------------------------------------------------------------------------
 
-
 -- "scene:create()"
 function scene:create( event )
 
     local sceneGroup = self.view
+    
+
+    physics=require( "physics");
+    physics.start()
+    physics.setGravity( 0, 0.6)
+
+    local particleDesigner = require( "screens.particleDesigner" )
+
+    local asteroids = require("screens.asteroids")
+
+    local emitter = particleDesigner.newEmitter("assets/fire.json")
 
 
     _W = display.contentCenterX
     _H = display.contentCenterY
+    
+    local lives=3
+    local energy=0
+    local score=0
+    local numshot =0
+    local shotTable={}
 
-    local spaceship = display.newImage("assets/spaceship.png",_W-400,_H)
+    local spaceship = display.newImageRect("assets/spaceship.png",40,40)
+    
+    spaceship.x=_W-400
+    spaceship.y=_H
     spaceship.tx=0
     spaceship.ty=0
-    --sceneGroup:Insert(spaceship)
-    local physics=require( "physics");
-    physics.start()
-    physics.setGravity( 0, 0 )
-    physics.addBody(spaceship )
+    spaceship.myName="starFighter"
 
+    spaceship:toFront()
+    
+    --physics.setDrawMode("hybrid")
+    physics.addBody(spaceship)
+    spaceship.isSensor=true
 
     -------------------------------- Movement of spaceship ------------------------------------------------------------------
     spaceship.linearDamping=3
     spaceship.angularDamping=30
-
-    spaceship.enterFrame = function(self,event)
-        print(self.x,self.tx, self.y,self.ty)
-
-        
-        local area = 5
-        if self.y <= self.ty + area and self.y >= self.ty - area then
-            spaceship:setLinearVelocity(0,0) -- para a nave
-           
-        end
-    end
-
-
-    Runtime:addEventListener("enterFrame",spaceship)
-
-
     Runtime:addEventListener("touch",function(event)
         if event.phase == "began" or event.phase == "moved" then
             local  y = event.y
@@ -59,20 +63,34 @@ function scene:create( event )
             --Seta o destino da nave
             spaceship.ty = y
 
-            spaceship:setLinearVelocity(0,ty*sppedMultiplier) --this will set the velocity of the circle towards the computed touch coordinates on a straight path.
-            --spaceship.angularVelocity=(ty*sppedMultiplier)
-
-            --spaceship:rotate(-22)
-
+            spaceship:setLinearVelocity(0,ty*sppedMultiplier)
+            
         end
     end)
 
+    ------------------------------------------------------ Planets ------------------------------------------------------------------
+
+    local planet1 = display.newImage("assets/background/planet1.png",_W+400,_H-300)
+    
+    planet1:toBack()
+
+    function planet1:enterFrame()
+
+        self:translate(-0.2,0)
+        if self.x <= -50 then
+            Runtime:removeEventListener( "enterFrame", self )
+            display.remove(self)
+        end
+
+    end
+
+    Runtime:addEventListener("enterFrame",planet1 )
 
     ------------------------------------------------------ Stars ------------------------------------------------------------------
     starCtr = 0
     stars = {}
-    currTransSpeed = 500
-    displayHeight = display.screenOriginX
+    currTransSpeed = 3000
+    displayHeight = display.screenOriginX-10
     math.randomseed( os.time() )
 
     local function removeMe() --remove stars after reaching end of screen
@@ -95,14 +113,15 @@ function scene:create( event )
             starCtr = starCtr + 1
             local currX = math.random( 1,display.contentWidth+600)
             local currY = math.random( 1,display.contentHeight+200)
-            local currRadius = math.random( 1,4)
+            local currRadius = math.random( 0.5,1.0)
             stars[starCtr] = display.newCircle( currX, currY, currRadius)
+            --stars[starCtr]:toBack()
             transition.to( stars[starCtr], {x=display.screenOriginX - currRadius,time = currTransSpeed,onComplete = removeMe} )
         end    
     end
 
     local function startSpace()
-        timer.performWithDelay( 1, loadSpace , -1 )
+        timer.performWithDelay( 100, loadSpace , -5 )
     --  timer.performWithDelay( 5000, loadPlanet , -1 )
     end
 
@@ -110,8 +129,68 @@ function scene:create( event )
 
 
 
-    -- Initialize the scene here
-    -- Example: add display objects to "sceneGroup", add touch listeners, etc.
+    ------------------------------------------------------ Pontuação ------------------------------------------------------------------    
+
+    local function newText()   
+        textLives = display.newText("Lives: "..lives, 50, 30, nil, 28)
+        textScore = display.newText("Score: "..score, 50, 10, nil, 28)
+        textLives:setTextColor(255,255,255) 
+        textScore:setTextColor(255,255,255) 
+    end 
+
+    local function updateText()
+        textLives.text = "Lives: "..lives 
+        textScore.text = "Score: "..score 
+    end  
+
+    newText()
+
+    ------------------------------------------------- Asteroids ----------------------------------------------------
+
+    asteroids.loadAsteroids();
+
+    ------------------------------------------------- Colisão ----------------------------------------------------
+
+
+    local function onCollision(event)    
+        if(event.object1.myName =="starFighter" or event.object2.myName =="starFighter") then  
+            if(died == false) then    
+                died = true 
+            end
+            if(lives == 0) then      
+                media.playEventSound("audio/explosion-02.wav")
+                
+                local lose = display.newText("Você falhou.", display.contentCenterX, 150, nil, 36)      
+                lose:setTextColor(255,255,255)   
+            else      
+                media.playEventSound("audio/explosion-02.wav")      
+                spaceship.alpha = 0      
+                lives=lives-1      
+                --cleanup()      
+                timer.performWithDelay(500,weDied,1)   
+            end  
+        end   
+
+        if((event.object1.myName=="asteroid" and event.object2.myName=="shot") or (event.object1.myName=="shot" and event.object2.myName=="asteroid")) then   
+            --media.playEventSound("sounds/explosion.wav")   
+            event.object1:removeSelf()   
+            event.object1.myName=nil   
+            event.object2:removeSelf()   
+            event.object2.myName=nil   
+            score=score+100    
+        end 
+    end  
+
+    function weDied()  -- pisca a nova nave 
+        transition.to(spaceship, {alpha=1, timer=5000})  
+        died=false 
+    end 
+
+
+    Runtime:addEventListener("collision",onCollision)
+
+    timer.performWithDelay(500,updateText,0)
+
 end
 
 

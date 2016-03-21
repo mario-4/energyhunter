@@ -22,7 +22,7 @@ local function changeText()
 	elseif ( loopCount == 240 ) then
 		nameDev.text = "Empty Project Template"		-- Access the text of nameDev object and change it.
 	elseif ( loopCount == 360 ) then
-		nameDev.text = "By Serkan Aksit"		-- Access the text of nameDev object and change it.
+		nameDev.text = "By Mario Paulo"		-- Access the text of nameDev object and change it.
 		loopCount = 0
 	end
 
