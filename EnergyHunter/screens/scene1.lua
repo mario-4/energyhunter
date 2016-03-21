@@ -25,7 +25,7 @@ function scene:create( event )
 
     local asteroids = require("screens.asteroids")
 
-    local emitter = particleDesigner.newEmitter("assets/fire.json")
+    local emitter = particleDesigner.init()
 
 
     _W = display.contentCenterX
@@ -34,6 +34,7 @@ function scene:create( event )
     local lives=3
     local energy=0
     local score=0
+
     local numshot =0
     local shotTable={}
 
@@ -132,15 +133,20 @@ function scene:create( event )
     ------------------------------------------------------ Pontuação ------------------------------------------------------------------    
 
     local function newText()   
-        textLives = display.newText("Lives: "..lives, 50, 30, nil, 28)
-        textScore = display.newText("Score: "..score, 50, 10, nil, 28)
+        textLives = display.newText("Lives: "..lives, 70, 30, nil, 28)
+        textScore = display.newText("Score: "..score, 180, 30, nil, 28)
+        textEnergy = display.newText("Energy: "..energy, 300, 30, nil, 28)
+        
         textLives:setTextColor(255,255,255) 
-        textScore:setTextColor(255,255,255) 
+        textScore:setTextColor(255,255,255)
+        textEnergy:setTextColor(255,255,255) 
     end 
 
     local function updateText()
         textLives.text = "Lives: "..lives 
         textScore.text = "Score: "..score 
+        textEnergy.text = "Energy: "..energy 
+        
     end  
 
     newText()
@@ -153,7 +159,7 @@ function scene:create( event )
 
 
     local function onCollision(event)    
-        if(event.object1.myName =="starFighter" or event.object2.myName =="starFighter") then  
+        if((event.object1.myName=="asteroid" and event.object2.myName=="starFighter") or (event.object2.myName=="asteroid" and event.object1.myName=="starFighter")) then  
             if(died == false) then    
                 died = true 
             end
@@ -179,10 +185,19 @@ function scene:create( event )
             event.object2.myName=nil   
             score=score+100    
         end 
+
+
+        if((event.object2.myName=="emitterChildren" and event.object1.myName=="starFighter")) then  
+            energy=energy+1
+            event.object2.isDeleted=true
+            
+
+        end 
+
     end  
 
     function weDied()  -- pisca a nova nave 
-        transition.to(spaceship, {alpha=1, timer=5000})  
+        transition.to(spaceship, {alpha=1, timer=2000})  
         died=false 
     end 
 
