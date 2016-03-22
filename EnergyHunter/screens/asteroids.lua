@@ -6,9 +6,12 @@ local numAsteroids = 0
 local maxShotAge = 1000 
 local maxAsteroidAge=1000
 local tick=600
+local runtime = 0
+local group=display.newGroup()
+
 function loadAsteroids()
     numAsteroids= numAsteroids +1 
-    asteroidsTable[numAsteroids] = display.newImageRect("assets/meteor3.png",50,50) 
+    asteroidsTable[numAsteroids] = display.newImageRect("assets/asteroids/meteor3.png",50,50) 
     asteroidsTable[numAsteroids].myName="asteroid"
     physics.addBody(asteroidsTable[numAsteroids],{density=1,friction=0.4,bounce=1})
 
@@ -17,20 +20,35 @@ function loadAsteroids()
     asteroidsTable[numAsteroids].gravityScale=math.random(-1,1)
     local asteroid=asteroidsTable[numAsteroids]
     asteroid.rotation=0.002
-    asteroid:setLinearVelocity(-100*2,0)
-    function asteroid:enterFrame()
-        
-        self:rotate(math.random(0.6,1.6))
-        self:translate(-4,0)
-        if self.x <= -20 then
-            Runtime:removeEventListener( "enterFrame", self )
-            display.remove(self)
-            self=nil
-        end
-    end
-
-    Runtime:addEventListener( "enterFrame", asteroid )
+    group:insert(asteroid)
+    --asteroid:setLinearVelocity(-100*2,0)
+    
 end  
+
+function frameUpdate()
+    dt=getDeltaTime()
+    print(dt)
+    --self:rotate(math.random(0.6,1.6))
+
+    for i=1,group.numChildren do
+        local child = group[i]
+        if(child~=nil) then
+            child:translate(-10*dt,0)
+            if child.x <= -20 then
+                group:remove(child)
+            end
+        end
+        
+    end
+end
+
+Runtime:addEventListener( "enterFrame", frameUpdate )
+function getDeltaTime()
+    local temp = system.getTimer()  -- Get current game time in ms
+    local dt = (temp-runtime) / (1000/60)  -- 60 fps or 30 fps as base
+    runtime = temp  -- Store game time
+    return dt
+end
 
 local function gameLoop() 
     

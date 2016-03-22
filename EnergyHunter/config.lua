@@ -8,7 +8,7 @@ application =
         width = 720,
         height = 1280,
         scale = "letterbox",	--other options are: zoomEven, adaptive, zoomStretch
-
+        fps=60,
         --There is also the imageSuffix option. If you would like to use different images for various resolutions, this is what you'll use.
         --imageSuffix =
         --{
