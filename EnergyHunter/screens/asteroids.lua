@@ -17,23 +17,25 @@ function loadAsteroids()
 
     asteroidsTable[numAsteroids].x = display.contentWidth+20
     asteroidsTable[numAsteroids].y = (math.random(display.contentHeight))
-    asteroidsTable[numAsteroids].gravityScale=math.random(-1,1)
+    asteroidsTable[numAsteroids].gravityScale=math.random(-4,10)
     local asteroid=asteroidsTable[numAsteroids]
     asteroid.rotation=0.002
+
     group:insert(asteroid)
-    --asteroid:setLinearVelocity(-100*2,0)
-    
+    asteroid:setLinearVelocity(100*2,0)
 end  
 
 function frameUpdate()
     dt=getDeltaTime()
     print(dt)
-    --self:rotate(math.random(0.6,1.6))
+    
 
     for i=1,group.numChildren do
         local child = group[i]
         if(child~=nil) then
-            child:translate(-10*dt,0)
+            child:translate(-15*dt,0)
+            child:rotate(dt*(math.random(0.6,1.6)))
+            --child:applyLinearImpulse(dt*0.8,0,child.x,child.y)
             if child.x <= -20 then
                 group:remove(child)
             end
