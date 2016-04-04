@@ -5,6 +5,8 @@ asteroidsTable = {}
 local numAsteroids = 0
 local maxShotAge = 1000 
 local maxAsteroidAge=1000
+local numShot=0
+local shotTable={}
 local tick=600
 local runtime = 0
 local group=display.newGroup()
@@ -38,6 +40,10 @@ function frameUpdate()
             --child:applyLinearImpulse(dt*0.8,0,child.x,child.y)
             if child.x <= -20 then
                 group:remove(child)
+            
+            elseif child.isDeleted then 
+                group:remove(child)
+                child=nil
             end
         end
         

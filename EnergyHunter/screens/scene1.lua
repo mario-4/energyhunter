@@ -27,16 +27,12 @@ function scene:create( event )
 
     local emitter = particleDesigner.init()
 
-
     _W = display.contentCenterX
     _H = display.contentCenterY
     
     local lives=3
-    local energy=0
+    energy=0
     local score=0
-
-    local numshot =0
-    local shotTable={}
 
     local spaceship = display.newImageRect("assets/spaceship.png",40,40)
     
@@ -77,8 +73,8 @@ function scene:create( event )
 
     function planet1:enterFrame()
 
-        self:translate(-0.2,0)
-        if self.x <= -50 then
+        self:translate(-0.1,0)
+        if self.x <= -self.width then
             Runtime:removeEventListener( "enterFrame", self )
             display.remove(self)
         end
@@ -99,8 +95,8 @@ function scene:create( event )
 
     local function newText()   
         textLives = display.newText("Lives: "..lives, 70, 30, nil, 28)
-        textScore = display.newText("Score: "..score, 180, 30, nil, 28)
-        textEnergy = display.newText("Energy: "..energy, 300, 30, nil, 28)
+        textScore = display.newText("Score: "..score, 220, 30, nil, 28)
+        textEnergy = display.newText("Energy: "..energy, 380, 30, nil, 28)
         
         textLives:setTextColor(255,255,255) 
         textScore:setTextColor(255,255,255)
@@ -120,6 +116,7 @@ function scene:create( event )
 
     asteroids.loadAsteroids();
 
+    spaceship:addEventListener("tap", particleDesigner.shoot)
     ------------------------------------------------- Colisão ----------------------------------------------------
 
 
@@ -130,20 +127,21 @@ function scene:create( event )
             end
             if(lives == 0) then      
                 media.playEventSound("audio/explosion-02.wav")
-                
                 local lose = display.newText("Você falhou.", display.contentCenterX, 150, nil, 36)      
-                lose:setTextColor(255,255,255)   
+                lose:setTextColor(255,255,255)
+                event.object2.isDeleted=true    
             else      
                 media.playEventSound("audio/explosion-02.wav")      
                 spaceship.alpha = 0      
-                lives=lives-1      
+                lives=lives-1
+                event.object2.isDeleted=true      
                 --cleanup()      
                 timer.performWithDelay(500,weDied,1)   
             end  
         end   
 
         if((event.object1.myName=="asteroid" and event.object2.myName=="shot") or (event.object1.myName=="shot" and event.object2.myName=="asteroid")) then   
-            --media.playEventSound("sounds/explosion.wav")   
+            media.playEventSound("audio/explosion-02.wav")
             event.object1:removeSelf()   
             event.object1.myName=nil   
             event.object2:removeSelf()   

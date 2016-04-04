@@ -2,6 +2,7 @@ local particleDesigner = {}
 
 local json = require "json"
 
+numShot=0
 particleDesigner.loadParams = function( filename, baseDir )
 
 	-- load file
@@ -73,6 +74,31 @@ particleDesigner.init = function()
 	timer.performWithDelay(math.random(4000,10000),initChildrens,0)
 
 	return g
+end
+
+particleDesigner.shoot = function(event)
+	
+	if(energy>0) then
+		childrensFireshot=display.newGroup()
+		childrensFireshot.x=event.x
+		childrensFireshot.y=event.y
+		emitterFireshot=particleDesigner.newEmitter("assets/fireshot.json")
+		emitterFireshot.x=childrensFireshot.x
+		emitterFireshot.y=childrensFireshot.y
+		numShot = numShot+1  
+		childrensFireshot:insert(emitterFireshot)
+
+		physics.addBody(childrensFireshot, {density=1, friction=0})  
+		childrensFireshot.isbullet = true  
+		childrensFireshot.anchorChildren = true
+		childrensFireshot.gravityScale=0
+
+		transition.to(childrensFireshot, {x=display.contentWidth+150, time=800})  
+		--media.playEventSound("audio/tir.mp3")  
+		childrensFireshot.myName="shot"  
+		childrensFireshot.age=0 
+		energy=energy-0.5
+	end
 end 
 
 function initChildrens()
