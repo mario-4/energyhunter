@@ -78,7 +78,7 @@ end
 
 particleDesigner.shoot = function(event)
 	
-	if(energy>0) then
+	if(spaceship.energy>0) then
 		childrensFireshot=display.newGroup()
 		childrensFireshot.x=event.x
 		childrensFireshot.y=event.y
@@ -97,7 +97,7 @@ particleDesigner.shoot = function(event)
 		--media.playEventSound("audio/tir.mp3")  
 		childrensFireshot.myName="shot"  
 		childrensFireshot.age=0 
-		energy=energy-0.5
+		spaceship.energy=spaceship.energy-0.5
 	end
 end 
 

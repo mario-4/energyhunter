@@ -25,46 +25,19 @@ function scene:create( event )
 
     local asteroids = require("screens.asteroids")
 
+    local spaceshipManager = require ("screens.spaceshipManager")
+
+    spaceship=spaceshipManager.createSpaceShip(1,0,1,3,30,3,40,40)
+
     local emitter = particleDesigner.init()
 
     _W = display.contentCenterX
     _H = display.contentCenterY
-    
-    local lives=3
-    energy=0
-    local score=0
-
-    local spaceship = display.newImageRect("assets/spaceship.png",40,40)
-    
-    spaceship.x=_W-400
-    spaceship.y=_H
-    spaceship.tx=0
-    spaceship.ty=0
-    spaceship.myName="starFighter"
-
-    spaceship:toFront()
-    
-    --physics.setDrawMode("hybrid")
-    physics.addBody(spaceship)
-    spaceship.isSensor=true
-
-    -------------------------------- Movement of spaceship ------------------------------------------------------------------
-    spaceship.linearDamping=3
-    spaceship.angularDamping=30
-    Runtime:addEventListener("touch",function(event)
-        if event.phase == "began" or event.phase == "moved" then
-            local  y = event.y
-            local  ty =  y-spaceship.y -- calcula as novas coordenadas
-            local sppedMultiplier = 2 -- muda a velocidade da nave
-
-            --Seta o destino da nave
-            spaceship.ty = y
-
-            spaceship:setLinearVelocity(0,ty*sppedMultiplier)
-            
-        end
-    end)
-
+    _CX = display.contentCenterX
+    _CY = display.contentCenterY
+    _OX = display.screensOriginX
+    _OY = display.screensOriginY
+  
     ------------------------------------------------------ Planets ------------------------------------------------------------------
 
     local planet1 = display.newImage("assets/background/planet1.png",_W+400,_H-300)
@@ -94,9 +67,9 @@ function scene:create( event )
     ------------------------------------------------------ Pontuação ------------------------------------------------------------------    
 
     local function newText()   
-        textLives = display.newText("Lives: "..lives, 70, 30, nil, 28)
-        textScore = display.newText("Score: "..score, 220, 30, nil, 28)
-        textEnergy = display.newText("Energy: "..energy, 380, 30, nil, 28)
+        textLives = display.newText("Lives: "..spaceship.lives, 70, 30, nil, 28)
+        textScore = display.newText("Score: "..spaceship.score, 220, 30, nil, 28)
+        textEnergy = display.newText("Energy: "..spaceship.energy, 380, 30, nil, 28)
         
         textLives:setTextColor(255,255,255) 
         textScore:setTextColor(255,255,255)
@@ -104,9 +77,9 @@ function scene:create( event )
     end 
 
     local function updateText()
-        textLives.text = "Lives: "..lives 
-        textScore.text = "Score: "..score 
-        textEnergy.text = "Energy: "..energy 
+        textLives.text = "Lives: "..spaceship.lives 
+        textScore.text = "Score: "..spaceship.score 
+        textEnergy.text = "Energy: "..spaceship.energy 
         
     end  
 
@@ -122,10 +95,10 @@ function scene:create( event )
 
     local function onCollision(event)    
         if((event.object1.myName=="asteroid" and event.object2.myName=="starFighter") or (event.object2.myName=="asteroid" and event.object1.myName=="starFighter")) then  
-            if(died == false) then    
-                died = true 
+            if(spaceship.died == false) then    
+                spaceship.died = true 
             end
-            if(lives == 0) then      
+            if(spaceship.lives == 0) then      
                 media.playEventSound("audio/explosion-02.wav")
                 local lose = display.newText("Você falhou.", display.contentCenterX, 150, nil, 36)      
                 lose:setTextColor(255,255,255)
@@ -133,10 +106,10 @@ function scene:create( event )
             else      
                 media.playEventSound("audio/explosion-02.wav")      
                 spaceship.alpha = 0      
-                lives=lives-1
+                spaceship.lives=spaceship.lives-1
                 event.object2.isDeleted=true      
                 --cleanup()      
-                timer.performWithDelay(500,weDied,1)   
+                timer.performWithDelay(200,weDied,1)   
             end  
         end   
 
@@ -146,12 +119,12 @@ function scene:create( event )
             event.object1.myName=nil   
             event.object2:removeSelf()   
             event.object2.myName=nil   
-            score=score+100    
+            spaceship.score=spaceship.score+100    
         end 
 
 
         if((event.object2.myName=="emitterChildren" and event.object1.myName=="starFighter")) then  
-            energy=energy+1
+            spaceship.energy=spaceship.energy+1
             event.object2.isDeleted=true
             
 
@@ -159,18 +132,20 @@ function scene:create( event )
 
     end  
 
-    function weDied()  -- pisca a nova nave 
-        transition.to(spaceship, {alpha=1, timer=2000})  
-        died=false 
-    end 
-
-
     Runtime:addEventListener("collision",onCollision)
 
     timer.performWithDelay(500,updateText,0)
 
-end
+    function weDied()  -- pisca a nova nave 
+        transition.to(spaceship, {alpha=1, timer=250})  
+        spaceship.died=false 
+    end 
 
+end
+function weDied()  -- pisca a nova nave 
+    transition.to(spaceshipLocal, {alpha=1, timer=200})  
+    spaceshipLocal.died=false 
+end 
 
 -- "scene:show()"
 function scene:show( event )
