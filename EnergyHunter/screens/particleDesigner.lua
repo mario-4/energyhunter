@@ -68,7 +68,6 @@ particleDesigner.init = function()
 
 	end
 
-
 	timer.performWithDelay(500,move,0)
 
 	timer.performWithDelay(math.random(4000,10000),initChildrens,0)

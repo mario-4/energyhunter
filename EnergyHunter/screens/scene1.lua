@@ -89,7 +89,8 @@ function scene:create( event )
 
     asteroids.loadAsteroids();
 
-    spaceship:addEventListener("tap", particleDesigner.shoot)
+    --spaceship:addEventListener("tap", particleDesigner.shoot)
+    spaceship:addEventListener("tap", spaceshipManager.accelerate)
     ------------------------------------------------- Colisão ----------------------------------------------------
 
 
@@ -142,10 +143,6 @@ function scene:create( event )
     end 
 
 end
-function weDied()  -- pisca a nova nave 
-    transition.to(spaceshipLocal, {alpha=1, timer=200})  
-    spaceshipLocal.died=false 
-end 
 
 -- "scene:show()"
 function scene:show( event )

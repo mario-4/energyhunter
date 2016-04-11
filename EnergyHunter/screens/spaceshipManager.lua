@@ -27,6 +27,7 @@ function createSpaceShip(energy,score,powerActives,linearDamping,angularDamping,
     spaceshipLocal.score=score
     spaceshipLocal.died=false
 	spaceshipLocal.tx=0
+	spaceshipLocal.initialX=spaceshipLocal.x
     spaceshipLocal.ty=0
     spaceshipLocal.x=_W-400
     spaceshipLocal.y=_H
@@ -59,12 +60,33 @@ function weDied()  -- pisca a nova nave
     spaceshipLocal.died=false 
 end 
 
-function getLives()
-	
-	return lives;
 
+function accelerate()
+
+	if spaceshipLocal.energy>0 then
+
+		spaceshipLocal.tx = 400 
+	    spaceshipLocal:setLinearVelocity(spaceshipLocal.tx*2,0)
+	    
+ 		--timer.performWithDelay(1000,desaccelerate,1)   
+		spaceshipLocal.energy= spaceshipLocal.energy-0.5
+	end
 end
 
-function function_name( ... )
-	return spaceship
+function dispararEvento()
+	spaceshipLocal:addEventListener( "acceleration", desaccelerate )
+	local eventAcceleration ={name="acceleration",target=spaceshipLocal}
+	spaceshipLocal:dispatchEvent( eventAcceleration )
 end
+
+function desaccelerate(event)
+
+	while spaceshipLocal.initialX < spaceshipLocal.x do
+
+		speedMultiplier=3
+		spaceshipLocal.tx = -50
+	    spaceshipLocal:setLinearVelocity(spaceship.tx,0)
+	    
+	end
+end
+
