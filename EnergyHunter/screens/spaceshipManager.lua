@@ -6,7 +6,7 @@ local powerActives={}
 local lives=3
 local MyName="starFighter"
 local spaceshipLocal
-
+local runtimeAcceleration = 0
  _W = display.contentCenterX
  _H = display.contentCenterY
  _CX = display.contentCenterX
@@ -27,12 +27,12 @@ function createSpaceShip(energy,score,powerActives,linearDamping,angularDamping,
     spaceshipLocal.score=score
     spaceshipLocal.died=false
 	spaceshipLocal.tx=0
-	spaceshipLocal.initialX=spaceshipLocal.x
     spaceshipLocal.ty=0
     spaceshipLocal.x=_W-400
     spaceshipLocal.y=_H
     spaceshipLocal.isSensor=true
-
+    spaceshipLocal.initialX=spaceshipLocal.x
+    spaceshipLocal.accelerating=false
     spaceshipLocal:toFront()
 
     Runtime:addEventListener("touch", onTouch )
@@ -67,26 +67,43 @@ function accelerate()
 
 		spaceshipLocal.tx = 400 
 	    spaceshipLocal:setLinearVelocity(spaceshipLocal.tx*2,0)
-	    
- 		--timer.performWithDelay(1000,desaccelerate,1)   
+        spaceshipLocal.accelerating=true
 		spaceshipLocal.energy= spaceshipLocal.energy-0.5
+        timer.performWithDelay(1000,desaccelerateCallBack,1)
+        --desaccelerateCallBack()
 	end
+
 end
 
-function dispararEvento()
-	spaceshipLocal:addEventListener( "acceleration", desaccelerate )
-	local eventAcceleration ={name="acceleration",target=spaceshipLocal}
-	spaceshipLocal:dispatchEvent( eventAcceleration )
+function desaccelerateCallBack(  )
+    if(spaceshipLocal.accelerating==false) then
+        Runtime:removeEventListener("enterFrame",desaccelerate)
+    else
+        spaceshipLocal.accelerating=true
+        Runtime:addEventListener("enterFrame",desaccelerate)
+        runtimeAcceleration=0
+    end
 end
 
-function desaccelerate(event)
+function desaccelerate()
+   
+    dt=getDeltaTimeSpaceShip()
+   
+    print(dt)
 
-	while spaceshipLocal.initialX < spaceshipLocal.x do
-
-		speedMultiplier=3
-		spaceshipLocal.tx = -50
-	    spaceshipLocal:setLinearVelocity(spaceship.tx,0)
-	    
-	end
+    if(spaceshipLocal.initialX<=spaceship.x) then
+        spaceshipLocal:translate(-0.5,0)
+    else
+        spaceshipLocal.accelerating=false
+        Runtime:removeEventListener("enterFrame",desaccelerate)
+        runtimeAcceleration=0
+    end
+   
 end
 
+function getDeltaTimeSpaceShip()
+    local temp = system.getTimer()
+    local dt = (temp-runtimeAcceleration) / (1000/60) 
+    runtimeAcceleration = temp
+    return dt
+end

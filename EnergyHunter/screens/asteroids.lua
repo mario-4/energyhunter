@@ -29,7 +29,6 @@ end
 
 function frameUpdate()
     dt=getDeltaTime()
-    print(dt)
     
 
     for i=1,group.numChildren do

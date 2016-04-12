@@ -22,3 +22,17 @@ I would also recommend looking into links that Alex@Panc from the Corona forums 
 5. Scene management: http://docs.coronalabs.com/guide/system/composer/index.html
 6. Physics and you: http://docs.coronalabs.com/guide/physics/physicsSetup/index.html
 7. Saving game data: http://docs.coronalabs.com/guide/data/readWriteFiles/index.html
+
+
+------------------------------- Rascunho --------------------------------------------------
+
+function desaccelerate(event)
+
+	while spaceshipLocal.initialX < spaceshipLocal.x do
+
+		speedMultiplier=3
+		spaceshipLocal.tx = -50
+	    spaceshipLocal:setLinearVelocity(spaceship.tx,0)
+	    
+	end
+end
