@@ -1,19 +1,20 @@
 local particleDesigner = {}
 
 local json = require "json"
+local pex = require "libraries.pex"
+local particle = pex.load("assets/particles/particle.pex","assets/particles/texture.png")
+local timerMove
+local timerDecrease
+isAbsorbing=false
 
 numShot=0
+
 particleDesigner.loadParams = function( filename, baseDir )
 
-	-- load file
 	local path = system.pathForFile( filename, baseDir )
-
 	local f = io.open( path, 'r' )
-
 	local data = f:read( "*a" )
-	f:close()
-
-	-- convert json to Lua table
+	f:close()	
 	local params = json.decode( data )
 
 	return params
@@ -22,25 +23,21 @@ end
 particleDesigner.newEmitter = function( filename, baseDir )
 
 	local emitterParams = particleDesigner.loadParams( filename, baseDir )
-
 	local emitter = display.newEmitter( emitterParams )
-
-
 	return emitter
 end
 
 
 particleDesigner.init = function()
 
-	emitterPrincipal=particleDesigner.newEmitter("assets/fire.json")
+	emitterPrincipal=particleDesigner.newEmitter("assets/particles/fire.json")
 	
 	g = display.newGroup()
     g.x = 1000
     g.y = 400
-   
+ 
 	g:insert(emitterPrincipal)
 	
-
 	physics.addBody( g,"dynamic",{friction=0.25,bounce=0.95,radius=5,density=1} )
 	g.anchorChildren = true
 	g.isSensor=true
@@ -49,39 +46,23 @@ particleDesigner.init = function()
 	g.angularDamping=60
 	g.isFixedRotation=true
 	
-	local originY= display.screenOriginY + 20
-	local finalY = display.contentHeight - 20
+	originY= display.screenOriginY + 20
+	finalY = display.contentHeight - 20
 
-	local function move()
-
-		local emitterY = g.y
-
-		g:setLinearVelocity(0,math.random(-500,500))
-
-		if(emitterY <= originY) then 
-			g:applyForce(0,200,g.x,g.y)
-		end  
-
-		if(emitterY >= finalY) then 
-			g:applyForce(0,-200,g.x,g.y)
-		end  
-
-	end
-
-	timer.performWithDelay(500,move,0)
+	initMovement()
 
 	timer.performWithDelay(math.random(4000,10000),initChildrens,0)
 
 	return g
 end
 
-particleDesigner.shoot = function(event)
+particleDesigner.shoot = function()
 	
 	if(spaceship.energy>0) then
 		childrensFireshot=display.newGroup()
-		childrensFireshot.x=event.x
-		childrensFireshot.y=event.y
-		emitterFireshot=particleDesigner.newEmitter("assets/fireshot.json")
+		childrensFireshot.x=spaceship.x
+		childrensFireshot.y=spaceship.y
+		emitterFireshot=particleDesigner.newEmitter("assets/particles/fireshot.json")
 		emitterFireshot.x=childrensFireshot.x
 		emitterFireshot.y=childrensFireshot.y
 		numShot = numShot+1  
@@ -96,15 +77,54 @@ particleDesigner.shoot = function(event)
 		--media.playEventSound("audio/tir.mp3")  
 		childrensFireshot.myName="shot"  
 		childrensFireshot.age=0 
-		spaceship.energy=spaceship.energy-0.5
+		spaceship.energy=spaceship.energy-0.25
 	end
 end 
+
+particleDesigner.init_stop_decreasing_rate_emitter = function()
+	if(not isAbsorbing) then
+		radial = display.newEmitter(particle)
+    	stopMovement()
+		radial.x=g.x-100
+    	radial.y=g.y
+		
+		timerDecrease = timer.performWithDelay(500,decrease_rate,0)
+		isAbsorbing=true
+	else
+		timer.cancel(timerDecrease)
+		display.remove(radial)
+		radial=null
+		initMovement()
+		isAbsorbing=false
+	end
+end
+
+function decrease_rate( )
+	rateDecrease=emitterPrincipal.emissionRateInParticlesPerSeconds * 0.09
+	emitterPrincipal.emissionRateInParticlesPerSeconds= emitterPrincipal.emissionRateInParticlesPerSeconds-rateDecrease
+end
+
+function move()
+
+	local emitterY = g.y
+
+	g:setLinearVelocity(0,math.random(-500,500))
+
+	if(emitterY <= originY) then 
+		g:applyForce(0,200,g.x,g.y)
+	end  
+
+	if(emitterY >= finalY) then 
+		g:applyForce(0,-200,g.x,g.y)
+	end  
+
+end
 
 function initChildrens()
 	
 	childrensGroup=display.newGroup()
 	
-	emitterChildren=particleDesigner.newEmitter("assets/miniFire.json")
+	emitterChildren=particleDesigner.newEmitter("assets/particles/miniFire.json")
 	childrensGroup.myName="emitterChildren"
 	childrensGroup.x=g.x
 	childrensGroup.y=g.y
@@ -137,10 +157,14 @@ function initChildrens()
     end
 
     Runtime:addEventListener( "enterFrame", childrensGroup )
-
-
 end
 
+function initMovement()
+	timerMove = timer.performWithDelay(500,move,0)
+end
 
+function stopMovement()
+    timer.cancel(timerMove)
+end
 
 return particleDesigner

@@ -22,7 +22,7 @@ function scene:create( event )
     physics.setGravity( 0, 0.6)
 
     local particleDesigner = require( "screens.particleDesigner" )
-
+    local widget = require( "widget" )
     local asteroids = require("screens.asteroids")
 
     local spaceshipManager = require ("screens.spaceshipManager")
@@ -64,22 +64,58 @@ function scene:create( event )
 
 
 
-    ------------------------------------------------------ Pontuação ------------------------------------------------------------------    
+    ------------------------------------------------------ Controles ------------------------------------------------------------------    
 
+    local progressView = widget.newProgressView(
+        {
+            x=430,
+            y=30,
+            left = 50,
+            top = 200,
+            width = 220,
+            isAnimated = true
+        }
+    )
+
+    progressView:setProgress(spaceship.energy*0.1 )
+
+    local shotButton = widget.newButton(
+        {
+            x= display.screenOriginY+70,
+            y=display.contentHeight-70,
+            defaultFile = "assets/gui/botaoPowerUp.png",
+            onPress = particleDesigner.shoot
+        }
+    )
+
+    local shotButton = widget.newButton(
+        {
+            x= display.screenOriginY+70,
+            y=display.contentHeight-220,
+            defaultFile = "assets/gui/botaoPowerUp2.png",
+            overFile = "assets/gui/botaoPowerUp3.png",
+            onPress = particleDesigner.init_stop_decreasing_rate_emitter
+        }
+    )
+  ------------------------------------------------------ Pontuação ------------------------------------------------------------------    
+
+   
+   
     local function newText()   
         textLives = display.newText("Lives: "..spaceship.lives, 70, 30, nil, 28)
         textScore = display.newText("Score: "..spaceship.score, 220, 30, nil, 28)
-        textEnergy = display.newText("Energy: "..spaceship.energy, 380, 30, nil, 28)
+        --textEnergy = display.newText("Energy: "..spaceship.energy, 380, 30, nil, 28)
         
         textLives:setTextColor(255,255,255) 
         textScore:setTextColor(255,255,255)
-        textEnergy:setTextColor(255,255,255) 
+       -- textEnergy:setTextColor(255,255,255) 
     end 
 
     local function updateText()
         textLives.text = "Lives: "..spaceship.lives 
         textScore.text = "Score: "..spaceship.score 
-        textEnergy.text = "Energy: "..spaceship.energy 
+       -- textEnergy.text = "Energy: "..spaceship.energy 
+        progressView:setProgress(spaceship.energy*0.1 )
         
     end  
 
@@ -88,8 +124,6 @@ function scene:create( event )
     ------------------------------------------------- Asteroids ----------------------------------------------------
 
     asteroids.loadAsteroids();
-
-    --spaceship:addEventListener("tap", particleDesigner.shoot)
     spaceship:addEventListener("tap", spaceshipManager.accelerate)
     ------------------------------------------------- Colisão ----------------------------------------------------
 
