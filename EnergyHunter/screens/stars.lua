@@ -2,7 +2,7 @@ module(..., package.seeall)
 
 starCtr = 0
 stars = {}
-currTransSpeed = 1000
+currTransSpeed = 1500
 displayHeight = display.screenOriginX-10
 math.randomseed( os.time() )
 
