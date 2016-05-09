@@ -7,7 +7,7 @@ local maxShotAge = 1000
 local maxAsteroidAge=1000
 local numShot=0
 local shotTable={}
-local tick=600
+local tick=900
 local runtime = 0
 local group=display.newGroup()
 
@@ -19,7 +19,8 @@ function loadAsteroids()
 
     asteroidsTable[numAsteroids].x = display.contentWidth+20
     asteroidsTable[numAsteroids].y = (math.random(display.contentHeight))
-    asteroidsTable[numAsteroids].gravityScale=math.random(-4,10)
+    asteroidsTable[numAsteroids].gravityScale=0
+    --math.random(-4,10)
     local asteroid=asteroidsTable[numAsteroids]
     asteroid.rotation=0.002
 

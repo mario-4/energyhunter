@@ -22,12 +22,14 @@ function scene:create( event )
     physics.setGravity( 0, 0.6)
 
     local particleDesigner = require( "screens.particleDesigner" )
+
     local widget = require( "widget" )
+
     local asteroids = require("screens.asteroids")
 
     local spaceshipManager = require ("screens.spaceshipManager")
 
-    spaceship=spaceshipManager.createSpaceShip(1,0,1,3,30,3,40,40)
+    spaceship=spaceshipManager.createSpaceShip(5,0,1,3,30,3,40,40)
 
     local emitter = particleDesigner.init()
 
@@ -62,8 +64,6 @@ function scene:create( event )
 
     stars.startSpace()
 
-
-
     ------------------------------------------------------ Controles ------------------------------------------------------------------    
 
     local progressView = widget.newProgressView(
@@ -77,8 +77,20 @@ function scene:create( event )
         }
     )
 
+    local progressViewEmitter = widget.newProgressView(
+        {
+            x=830,
+            y=30,
+            left = 50,
+            top = 200,
+            width = 220,
+            isAnimated = true
+        }
+    )
+
     progressView:setProgress(spaceship.energy*0.1 )
 
+    progressView:setProgress(particleDesigner.getEmissionRate() )
     local shotButton = widget.newButton(
         {
             x= display.screenOriginY+70,
@@ -93,10 +105,23 @@ function scene:create( event )
             x= display.screenOriginY+70,
             y=display.contentHeight-220,
             defaultFile = "assets/gui/botaoPowerUp2.png",
-            overFile = "assets/gui/botaoPowerUp3.png",
+            overFile = "assets/gui/botaoPowerUp2.png",
             onPress = particleDesigner.init_stop_decreasing_rate_emitter
         }
     )
+
+
+    local accelerateButton = widget.newButton(
+        {
+            x= display.screenOriginY+70,
+            y=display.contentHeight-370,
+            defaultFile = "assets/gui/botaoPowerUp3.png",
+            overFile = "assets/gui/botaoPowerUp3.png",
+            onPress = spaceshipManager.accelerate
+        }
+    )
+
+
   ------------------------------------------------------ Pontuação ------------------------------------------------------------------    
 
    
@@ -116,7 +141,7 @@ function scene:create( event )
         textScore.text = "Score: "..spaceship.score 
        -- textEnergy.text = "Energy: "..spaceship.energy 
         progressView:setProgress(spaceship.energy*0.1 )
-        
+        progressViewEmitter:setProgress(particleDesigner.getEmissionRate() )
     end  
 
     newText()
@@ -124,7 +149,7 @@ function scene:create( event )
     ------------------------------------------------- Asteroids ----------------------------------------------------
 
     asteroids.loadAsteroids();
-    spaceship:addEventListener("tap", spaceshipManager.accelerate)
+
     ------------------------------------------------- Colisão ----------------------------------------------------
 
 

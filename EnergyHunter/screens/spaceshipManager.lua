@@ -88,17 +88,14 @@ end
 function desaccelerate()
    
     dt=getDeltaTimeSpaceShip()
-   
-    print(dt)
 
     if(spaceshipLocal.initialX<=spaceship.x) then
-        spaceshipLocal:translate(-0.5,0)
+        spaceshipLocal:translate(-0.1,0)
     else
         spaceshipLocal.accelerating=false
         Runtime:removeEventListener("enterFrame",desaccelerate)
         runtimeAcceleration=0
-    end
-   
+    end   
 end
 
 function getDeltaTimeSpaceShip()

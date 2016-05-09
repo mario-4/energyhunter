@@ -5,7 +5,9 @@ local pex = require "libraries.pex"
 local particle = pex.load("assets/particles/particle.pex","assets/particles/texture.png")
 local timerMove
 local timerDecrease
+local initialEmissionRate
 isAbsorbing=false
+local canAbsorve=false
 
 numShot=0
 
@@ -50,7 +52,7 @@ particleDesigner.init = function()
 	finalY = display.contentHeight - 20
 
 	initMovement()
-
+	initialEmissionRate=emitterPrincipal.emissionRateInParticlesPerSeconds
 	timer.performWithDelay(math.random(4000,10000),initChildrens,0)
 
 	return g
@@ -82,26 +84,55 @@ particleDesigner.shoot = function()
 end 
 
 particleDesigner.init_stop_decreasing_rate_emitter = function()
-	if(not isAbsorbing) then
-		radial = display.newEmitter(particle)
-    	stopMovement()
-		radial.x=g.x-100
-    	radial.y=g.y
-		
-		timerDecrease = timer.performWithDelay(500,decrease_rate,0)
-		isAbsorbing=true
-	else
-		timer.cancel(timerDecrease)
-		display.remove(radial)
-		radial=null
-		initMovement()
-		isAbsorbing=false
+	if(canAbsorve) then
+		if(not isAbsorbing) then
+			radial = display.newEmitter(particle)
+	    	stopMovement()
+			radial.x=g.x-80
+	    	radial.y=g.y
+			timerDecrease = timer.performWithDelay(500,decrease_rate,0)
+			print(g)
+			isAbsorbing=true
+		else
+			timer.cancel(timerDecrease)
+			display.remove(radial)
+			radial=null
+			initMovement()
+			isAbsorbing=false
+		end
+
 	end
 end
 
+function checkDistance()
+	local xDistance = g.x-spaceship.x
+	local yDistance = g.y-spaceship.y
+	--print(xDistance,yDistance)
+	if(xDistance<150 and xDistance>-30 and yDistance<50 and yDistance>-50) then
+		canAbsorve=true
+	
+	else
+		canAbsorve=false
+		if(isAbsorbing) then 
+			timer.cancel(timerDecrease)
+			display.remove(radial)
+			radial=null
+			initMovement()
+			isAbsorbing=false
+		end	
+		
+	end
+
+end
+
 function decrease_rate( )
-	rateDecrease=emitterPrincipal.emissionRateInParticlesPerSeconds * 0.09
+	rateDecrease=emitterPrincipal.emissionRateInParticlesPerSeconds * 0.3
 	emitterPrincipal.emissionRateInParticlesPerSeconds= emitterPrincipal.emissionRateInParticlesPerSeconds-rateDecrease
+end
+
+particleDesigner.getEmissionRate = function ()
+	print(emitterPrincipal.emissionRateInParticlesPerSeconds/initialEmissionRate)
+	return emitterPrincipal.emissionRateInParticlesPerSeconds/initialEmissionRate
 end
 
 function move()
@@ -160,11 +191,13 @@ function initChildrens()
 end
 
 function initMovement()
-	timerMove = timer.performWithDelay(500,move,0)
+	timerMove = timer.performWithDelay(1000,move,0)
 end
 
 function stopMovement()
     timer.cancel(timerMove)
 end
+
+Runtime:addEventListener( "enterFrame", checkDistance )
 
 return particleDesigner
