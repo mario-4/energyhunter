@@ -14,6 +14,18 @@ local runtimeAcceleration = 0
  _OX = display.screensOriginX
  _OY = display.screensOriginY
 
+function cleanUp()
+
+    if(spaceshipLocal.accelerating==false) then
+        Runtime:removeEventListener("enterFrame",desaccelerate)
+
+    end
+    Runtime:removeEventListener("touch",onTouch)
+
+    -- body
+end
+
+
 function createSpaceShip(energy,score,powerActives,linearDamping,angularDamping,lives,sizeX,sizeY)
 
 	spaceshipLocal = display.newImageRect("assets/spaceship.png",sizeX,sizeY)
@@ -89,8 +101,8 @@ function desaccelerate()
    
     dt=getDeltaTimeSpaceShip()
 
-    if(spaceshipLocal.initialX<=spaceship.x) then
-        spaceshipLocal:translate(-0.1,0)
+    if(spaceshipLocal.initialX<=spaceshipLocal.x) then
+        spaceshipLocal:translate(-0.2,0)
     else
         spaceshipLocal.accelerating=false
         Runtime:removeEventListener("enterFrame",desaccelerate)

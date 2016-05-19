@@ -21,15 +21,19 @@ function scene:create( event )
     physics.start()
     physics.setGravity( 0, 0.6)
 
-    local particleDesigner = require( "screens.particleDesigner" )
+    particleDesigner = require( "screens.particleDesigner" )
 
     local widget = require( "widget" )
 
     local asteroids = require("screens.asteroids")
 
-    local spaceshipManager = require ("screens.spaceshipManager")
+    spaceshipManager = require ("screens.spaceshipManager")
 
     spaceship=spaceshipManager.createSpaceShip(5,0,1,3,30,3,40,40)
+
+
+
+    sceneGroup:insert(spaceship)
 
     local emitter = particleDesigner.init()
 
@@ -43,7 +47,8 @@ function scene:create( event )
     ------------------------------------------------------ Planets ------------------------------------------------------------------
 
     local planet1 = display.newImage("assets/background/planet1.png",_W+400,_H-300)
-    
+    sceneGroup:insert(planet1)
+
     planet1:toBack()
 
     function planet1:enterFrame()
@@ -110,7 +115,6 @@ function scene:create( event )
         }
     )
 
-
     local accelerateButton = widget.newButton(
         {
             x= display.screenOriginY+70,
@@ -121,10 +125,7 @@ function scene:create( event )
         }
     )
 
-
   ------------------------------------------------------ Pontuação ------------------------------------------------------------------    
-
-   
    
     local function newText()   
         textLives = display.newText("Lives: "..spaceship.lives, 70, 30, nil, 28)
@@ -142,7 +143,14 @@ function scene:create( event )
        -- textEnergy.text = "Energy: "..spaceship.energy 
         progressView:setProgress(spaceship.energy*0.1 )
         progressViewEmitter:setProgress(particleDesigner.getEmissionRate() )
+        if particleDesigner.getEmissionRate()<0.5 then
+            timer.performWithDelay(3000,changeScene,1)
+        end
     end  
+
+    function changeScene()
+        composer.gotoScene( "screens.mainMenu", "crossFade", 200 )
+    end
 
     newText()
 
@@ -212,12 +220,9 @@ function scene:show( event )
     if ( phase == "will" ) then
         -- Called when the scene is still off screen (but is about to come on screen)
     elseif ( phase == "did" ) then
-        -- Called when the scene is now on screen
-        -- Insert code here to make the scene come alive
-        -- Example: start timers, begin animation, play audio, etc.
+        composer.removeScene( "screens.mainMenu" )
     end
 end
-
 
 -- "scene:hide()"
 function scene:hide( event )
@@ -229,11 +234,13 @@ function scene:hide( event )
         -- Called when the scene is on screen (but is about to go off screen)
         -- Insert code here to "pause" the scene
         -- Example: stop timers, stop animation, stop audio, etc.
+        particleDesigner.cleanUp()
+        spaceshipManager.cleanUp()
     elseif ( phase == "did" ) then
         -- Called immediately after scene goes off screen
+         composer.removeScene( "screens.scene1" )
     end
 end
-
 
 -- "scene:destroy()"
 function scene:destroy( event )
@@ -245,7 +252,6 @@ function scene:destroy( event )
     -- Example: remove display objects, save state, etc.
 end
 
-
 -- -------------------------------------------------------------------------------
 
 -- Listener setup
@@ -254,6 +260,6 @@ scene:addEventListener( "show", scene )
 scene:addEventListener( "hide", scene )
 scene:addEventListener( "destroy", scene )
 
--- -------------------------------------------------------------------------------
+----------------------------------------------------------------------------------
 
 return scene

@@ -200,4 +200,11 @@ end
 
 Runtime:addEventListener( "enterFrame", checkDistance )
 
+particleDesigner.cleanUp=function ( )
+	
+	
+	Runtime:removeEventListener( "enterFrame", checkDistance )
+
+end
+
 return particleDesigner

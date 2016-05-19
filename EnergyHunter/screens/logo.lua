@@ -48,7 +48,7 @@ function scene:show( event )
         -- This will happen once since its iteration number is defined as 1.
         -- You can define it as many as you want but consider the exceptional values 0 and -1, which will make the timer loop forever.
         -- For more information about timers, please refer to this document -> http://docs.coronalabs.com/api/library/timer/index.html
-        tmr = timer.performWithDelay( 1000, changeScene, 1 )        
+        tmr = timer.performWithDelay( 3000, changeScene, 1 )        
 
         --[[
         Another method for the line above using Lua closures:
