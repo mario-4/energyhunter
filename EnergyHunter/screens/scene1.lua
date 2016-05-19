@@ -10,7 +10,9 @@ local scene = composer.newScene()
 -- Local forward references should go here
 
 -- -------------------------------------------------------------------------------
-
+local function changeScene()
+    composer.gotoScene( "screens.mainMenu", "crossFade", 600 )
+end
 -- "scene:create()"
 function scene:create( event )
 
@@ -28,10 +30,9 @@ function scene:create( event )
     local asteroids = require("screens.asteroids")
 
     spaceshipManager = require ("screens.spaceshipManager")
+    win=false
 
     spaceship=spaceshipManager.createSpaceShip(5,0,1,3,30,3,40,40)
-
-
 
     sceneGroup:insert(spaceship)
 
@@ -140,12 +141,16 @@ function scene:create( event )
     local function updateText()
         textLives.text = "Lives: "..spaceship.lives 
         textScore.text = "Score: "..spaceship.score 
-       -- textEnergy.text = "Energy: "..spaceship.energy 
+       
         progressView:setProgress(spaceship.energy*0.1 )
         progressViewEmitter:setProgress(particleDesigner.getEmissionRate() )
-        if particleDesigner.getEmissionRate()<0.5 then
-            timer.performWithDelay(3000,changeScene,1)
+
+        if (particleDesigner.checkProgress()) then
+            win = display.newText("Parabéns!", display.contentCenterX, 150, nil, 36)
+            composer.removeScene( "screens.scene1" )
+            composer.gotoScene( "screens.conclusao", "crossFade", 1500 )
         end
+         
     end  
 
     function changeScene()

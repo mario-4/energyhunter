@@ -29,7 +29,6 @@ particleDesigner.newEmitter = function( filename, baseDir )
 	return emitter
 end
 
-
 particleDesigner.init = function()
 
 	emitterPrincipal=particleDesigner.newEmitter("assets/particles/fire.json")
@@ -126,13 +125,23 @@ function checkDistance()
 end
 
 function decrease_rate( )
-	rateDecrease=emitterPrincipal.emissionRateInParticlesPerSeconds * 0.3
+	rateDecrease=emitterPrincipal.emissionRateInParticlesPerSeconds * 0.4
 	emitterPrincipal.emissionRateInParticlesPerSeconds= emitterPrincipal.emissionRateInParticlesPerSeconds-rateDecrease
 end
 
 particleDesigner.getEmissionRate = function ()
 	print(emitterPrincipal.emissionRateInParticlesPerSeconds/initialEmissionRate)
 	return emitterPrincipal.emissionRateInParticlesPerSeconds/initialEmissionRate
+end
+
+
+particleDesigner.checkProgress = function ()
+	local res=false
+	if (emitterPrincipal.emissionRateInParticlesPerSeconds/initialEmissionRate<=0.05) then
+		res=true; 	
+	end 
+
+	return res
 end
 
 function move()
@@ -152,42 +161,43 @@ function move()
 end
 
 function initChildrens()
-	
-	childrensGroup=display.newGroup()
-	
-	emitterChildren=particleDesigner.newEmitter("assets/particles/miniFire.json")
-	childrensGroup.myName="emitterChildren"
-	childrensGroup.x=g.x
-	childrensGroup.y=g.y
-	
-	childrensGroup:insert(emitterChildren)
+	if(emitterPrincipal.emissionRateInParticlesPerSeconds/initialEmissionRate>0.05) then
+		childrensGroup=display.newGroup()
+		
+		emitterChildren=particleDesigner.newEmitter("assets/particles/miniFire.json")
+		childrensGroup.myName="emitterChildren"
+		childrensGroup.x=g.x
+		childrensGroup.y=g.y
+		
+		childrensGroup:insert(emitterChildren)
 
-	physics.addBody( childrensGroup ,"dynamic",{friction=0.25,bounce=0.95,radius=5,density=1} )
-	childrensGroup.anchorChildren = true
-	childrensGroup.isSensor=true
-	childrensGroup.gravityScale=0
-	childrensGroup.linearDamping=6
-	childrensGroup.angularDamping=60
-	childrensGroup.isFixedRotation=true
+		physics.addBody( childrensGroup ,"dynamic",{friction=0.25,bounce=0.95,radius=5,density=1} )
+		childrensGroup.anchorChildren = true
+		childrensGroup.isSensor=true
+		childrensGroup.gravityScale=0
+		childrensGroup.linearDamping=6
+		childrensGroup.angularDamping=60
+		childrensGroup.isFixedRotation=true
 
-	function childrensGroup:enterFrame()
-        
-        --self:rotate(math.random(0.6,1.6))
-        self:translate(-12,0)
-        if self.x <= -20 then
-            Runtime:removeEventListener( "enterFrame", self )
-            display.remove(self)
-            self=nil
-        
-        elseif self.isDeleted then 
-        	Runtime:removeEventListener( "enterFrame", self )
-        	display.remove(self)
-        	self=nil
-        end
-        
-    end
+		function childrensGroup:enterFrame()
+	        
+	        --self:rotate(math.random(0.6,1.6))
+	        self:translate(-12,0)
+	        if self.x <= -20 then
+	            Runtime:removeEventListener( "enterFrame", self )
+	            display.remove(self)
+	            self=nil
+	        
+	        elseif self.isDeleted then 
+	        	Runtime:removeEventListener( "enterFrame", self )
+	        	display.remove(self)
+	        	self=nil
+	        end
+	        
+	    end
 
-    Runtime:addEventListener( "enterFrame", childrensGroup )
+	    Runtime:addEventListener( "enterFrame", childrensGroup )
+	end
 end
 
 function initMovement()

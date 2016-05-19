@@ -101,8 +101,13 @@ function desaccelerate()
    
     dt=getDeltaTimeSpaceShip()
 
+<<<<<<< HEAD
     if(spaceshipLocal.initialX<=spaceshipLocal.x) then
         spaceshipLocal:translate(-0.2,0)
+=======
+    if(spaceshipLocal.initialX<=spaceship.x) then
+        spaceshipLocal:translate(-0.3,0)
+>>>>>>> 23e38b9123f135bb204aa3eec0e1b450df3c9bdf
     else
         spaceshipLocal.accelerating=false
         Runtime:removeEventListener("enterFrame",desaccelerate)

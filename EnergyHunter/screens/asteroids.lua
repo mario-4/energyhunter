@@ -25,7 +25,7 @@ function loadAsteroids()
     asteroid.rotation=0.002
 
     group:insert(asteroid)
-    asteroid:setLinearVelocity(100*2,0)
+    asteroid:setLinearVelocity(50*2,0)
 end  
 
 function frameUpdate()
@@ -35,7 +35,7 @@ function frameUpdate()
     for i=1,group.numChildren do
         local child = group[i]
         if(child~=nil) then
-            child:translate(-15*dt,0)
+            child:translate(-12*dt,0)
             child:rotate(dt*(math.random(0.6,1.6)))
             --child:applyLinearImpulse(dt*0.8,0,child.x,child.y)
             if child.x <= -20 then
@@ -59,9 +59,10 @@ function getDeltaTime()
 end
 
 local function gameLoop() 
-    
-    loadAsteroids() 
+    if(not win) then
 
+        loadAsteroids() 
+    end
 end 
 
 
