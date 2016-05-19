@@ -20,6 +20,7 @@ function loadAsteroids()
     asteroidsTable[numAsteroids].x = display.contentWidth+20
     asteroidsTable[numAsteroids].y = (math.random(display.contentHeight))
     asteroidsTable[numAsteroids].gravityScale=0
+    asteroidsTable[numAsteroids].isSensor=true
     --math.random(-4,10)
     local asteroid=asteroidsTable[numAsteroids]
     asteroid.rotation=0.002
@@ -51,6 +52,7 @@ function frameUpdate()
 end
 
 Runtime:addEventListener( "enterFrame", frameUpdate )
+
 function getDeltaTime()
     local temp = system.getTimer()  -- Get current game time in ms
     local dt = (temp-runtime) / (1000/60)  -- 60 fps or 30 fps as base
@@ -65,5 +67,10 @@ local function gameLoop()
     end
 end 
 
+function cleanUp()
+    
+    Runtime:removeEventListener( "enterFrame", frameUpdate )
+    timer.cancel(tmrGameLoop)
+end
 
-timer.performWithDelay(tick, gameLoop,0) 
+tmrGameLoop=timer.performWithDelay(tick, gameLoop,0) 

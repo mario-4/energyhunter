@@ -1,6 +1,5 @@
 module(..., package.seeall) 
 
-
 local energy=0
 local powerActives={}
 local lives=3
@@ -15,14 +14,11 @@ local runtimeAcceleration = 0
  _OY = display.screensOriginY
 
 function cleanUp()
-
     if(spaceshipLocal.accelerating==false) then
         Runtime:removeEventListener("enterFrame",desaccelerate)
 
     end
     Runtime:removeEventListener("touch",onTouch)
-
-    -- body
 end
 
 
@@ -100,7 +96,6 @@ end
 function desaccelerate()
    
     dt=getDeltaTimeSpaceShip()
-
 
     if(spaceshipLocal.initialX<=spaceshipLocal.x) then
         spaceshipLocal:translate(-0.2,0)

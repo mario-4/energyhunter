@@ -74,7 +74,7 @@ particleDesigner.shoot = function()
 		childrensFireshot.anchorChildren = true
 		childrensFireshot.gravityScale=0
 
-		transition.to(childrensFireshot, {x=display.contentWidth+150, time=800})  
+		transition.to(childrensFireshot, {x=display.contentWidth+150, time=500})  
 		--media.playEventSound("audio/tir.mp3")  
 		childrensFireshot.myName="shot"  
 		childrensFireshot.age=0 

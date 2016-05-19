@@ -20,14 +20,16 @@ function scene:create( event )
     
 
     physics=require( "physics");
+
     physics.start()
+    physics.setDrawMode("hybrid")
     physics.setGravity( 0, 0.6)
 
     particleDesigner = require( "screens.particleDesigner" )
 
     local widget = require( "widget" )
 
-    local asteroids = require("screens.asteroids")
+    asteroids = require("screens.asteroids")
 
     spaceshipManager = require ("screens.spaceshipManager")
     win=false
@@ -37,7 +39,7 @@ function scene:create( event )
     sceneGroup:insert(spaceship)
 
     local emitter = particleDesigner.init()
-
+    sceneGroup:insert(emitter)
     _W = display.contentCenterX
     _H = display.contentCenterY
     _CX = display.contentCenterX
@@ -82,6 +84,7 @@ function scene:create( event )
             isAnimated = true
         }
     )
+    sceneGroup:insert(progressView)
 
     local progressViewEmitter = widget.newProgressView(
         {
@@ -94,6 +97,8 @@ function scene:create( event )
         }
     )
 
+    sceneGroup:insert(progressViewEmitter)
+
     progressView:setProgress(spaceship.energy*0.1 )
 
     progressView:setProgress(particleDesigner.getEmissionRate() )
@@ -102,11 +107,13 @@ function scene:create( event )
             x= display.screenOriginY+70,
             y=display.contentHeight-70,
             defaultFile = "assets/gui/botaoPowerUp.png",
-            onPress = particleDesigner.shoot
+            onPress = particleDesigner.shoot,
+            xScale=-2,
+            yScale=-2
         }
     )
-
-    local shotButton = widget.newButton(
+    sceneGroup:insert(shotButton)
+    local decreaseEmitterButton = widget.newButton(
         {
             x= display.screenOriginY+70,
             y=display.contentHeight-220,
@@ -115,6 +122,7 @@ function scene:create( event )
             onPress = particleDesigner.init_stop_decreasing_rate_emitter
         }
     )
+    sceneGroup:insert(decreaseEmitterButton)
 
     local accelerateButton = widget.newButton(
         {
@@ -126,12 +134,15 @@ function scene:create( event )
         }
     )
 
+    sceneGroup:insert(accelerateButton)
   ------------------------------------------------------ Pontuação ------------------------------------------------------------------    
    
     local function newText()   
         textLives = display.newText("Lives: "..spaceship.lives, 70, 30, nil, 28)
         textScore = display.newText("Score: "..spaceship.score, 220, 30, nil, 28)
         --textEnergy = display.newText("Energy: "..spaceship.energy, 380, 30, nil, 28)
+        sceneGroup:insert(textLives)
+        sceneGroup:insert(textScore)
         
         textLives:setTextColor(255,255,255) 
         textScore:setTextColor(255,255,255)
@@ -147,15 +158,13 @@ function scene:create( event )
 
         if (particleDesigner.checkProgress()) then
             win = display.newText("Parabéns!", display.contentCenterX, 150, nil, 36)
+            sceneGroup:insert(win)
             composer.removeScene( "screens.scene1" )
-            composer.gotoScene( "screens.conclusao", "crossFade", 1500 )
+            timer.cancel(tmrPontuacao)
+            composer.gotoScene( "screens.mainMenu", "crossFade", 1500 )
         end
          
     end  
-
-    function changeScene()
-        composer.gotoScene( "screens.mainMenu", "crossFade", 200 )
-    end
 
     newText()
 
@@ -207,7 +216,7 @@ function scene:create( event )
 
     Runtime:addEventListener("collision",onCollision)
 
-    timer.performWithDelay(500,updateText,0)
+    tmrPontuacao=timer.performWithDelay(500,updateText,0)
 
     function weDied()  -- pisca a nova nave 
         transition.to(spaceship, {alpha=1, timer=250})  
@@ -241,6 +250,7 @@ function scene:hide( event )
         -- Example: stop timers, stop animation, stop audio, etc.
         particleDesigner.cleanUp()
         spaceshipManager.cleanUp()
+        asteroids.cleanUp()
     elseif ( phase == "did" ) then
         -- Called immediately after scene goes off screen
          composer.removeScene( "screens.scene1" )
