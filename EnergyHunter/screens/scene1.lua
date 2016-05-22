@@ -22,7 +22,7 @@ function scene:create( event )
     physics=require( "physics");
 
     physics.start()
-    physics.setDrawMode("hybrid")
+   -- physics.setDrawMode("hybrid")
     physics.setGravity( 0, 0.6)
 
     particleDesigner = require( "screens.particleDesigner" )
@@ -88,7 +88,7 @@ function scene:create( event )
 
     local progressViewEmitter = widget.newProgressView(
         {
-            x=830,
+            x=810,
             y=30,
             left = 50,
             top = 200,
@@ -106,7 +106,7 @@ function scene:create( event )
         {
             x= display.screenOriginY+70,
             y=display.contentHeight-70,
-            defaultFile = "assets/gui/botaoPowerUp.png",
+            defaultFile = "assets/gui/shotpw.png",
             onPress = particleDesigner.shoot,
             xScale=-2,
             yScale=-2
@@ -117,20 +117,21 @@ function scene:create( event )
         {
             x= display.screenOriginY+70,
             y=display.contentHeight-220,
-            defaultFile = "assets/gui/botaoPowerUp2.png",
-            overFile = "assets/gui/botaoPowerUp2.png",
-            onPress = particleDesigner.init_stop_decreasing_rate_emitter
+            defaultFile = "assets/gui/capturepw.png",
+            overFile = "assets/gui/capturepw.png",
+            onPress = spaceshipManager.accelerate
         }
     )
     sceneGroup:insert(decreaseEmitterButton)
 
     local accelerateButton = widget.newButton(
         {
-            x= display.screenOriginY+70,
-            y=display.contentHeight-370,
-            defaultFile = "assets/gui/botaoPowerUp3.png",
-            overFile = "assets/gui/botaoPowerUp3.png",
-            onPress = spaceshipManager.accelerate
+            x= display.screenOriginX+620,
+            y=display.screenOriginY+80,
+            defaultFile = "assets/gui/centralButton.png",
+            overFile = "assets/gui/centralButton.png",
+            onPress =  particleDesigner.init_stop_decreasing_rate_emitter
+           
         }
     )
 
