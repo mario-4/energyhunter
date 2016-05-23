@@ -23,6 +23,12 @@ physics=require( "physics");
 local function changeScene()
     composer.gotoScene( "screens.mainMenu", "crossFade", 600 )
 end
+
+local function restart(event)
+    timer.cancel(tmrPontuacao)
+    composer.gotoScene( "screens.levels", "crossFade", 1500 )
+end  
+
 -- "scene:create()"
 function scene:create( event )
 
@@ -183,6 +189,21 @@ function scene:create( event )
     )
 
     sceneGroup:insert(decreaseEmitterButton)
+
+
+    local restartButton = widget.newButton(
+        {
+            x= display.screenOriginX+1000,
+            y=display.screenOriginY+80,
+            defaultFile = "assets/gui/pause.png",
+            overFile = "assets/gui/pause.png",
+            onPress =  restart
+           
+        }
+    )
+
+    sceneGroup:insert(restartButton)
+
   ------------------------------------------------------ Pontuação ------------------------------------------------------------------    
    
     local function newText()
@@ -216,12 +237,13 @@ function scene:create( event )
         if (particleDesigner.checkProgress()) then
             --win = display.newText("Parabéns!", display.contentCenterX, 150, nil, 36)
             --sceneGroup:insert(win)
-            composer.removeScene( "screens.scene1" )
             timer.cancel(tmrPontuacao)
-            composer.gotoScene( "screens.vencedor", "crossFade", 1500 )
+            composer.gotoScene( "screens.vencedor", "crossFade", 2000 )
         end
          
-    end  
+    end
+
+   
 
     newText()
 
@@ -241,7 +263,7 @@ function scene:create( event )
                 media.playEventSound("audio/explosion-02.wav")
                 event.object2.isDeleted=true  
                 timer.cancel(tmrPontuacao)
-                composer.gotoScene( "screens.derrotado", "crossFade", 1200 )  
+                composer.gotoScene( "screens.derrotado", "crossFade", 2000 )  
             else      
                 media.playEventSound("audio/explosion-02.wav")      
                 spaceship.alpha = 0      

@@ -49,6 +49,7 @@ function scene:show( event )
 
     elseif ( phase == "did" ) then      -- Scene is fully shown on the screen
     	Runtime:addEventListener( "touch", changeScene )
+        composer.removeScene( "screens.scene1" )
     end
 end
 

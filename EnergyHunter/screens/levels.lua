@@ -49,7 +49,7 @@ function scene:create( event )
     ]]--
     _W = display.contentCenterX
     _H = display.contentCenterY
-    local planet1 = display.newImage("assets/background/planet"..math.random(1,4)..".png",_W+200,_H-150)
+    local planet1 = display.newImage("assets/background/planet"..math.random(1,4)..".png",_W+350,_H-150)
     mainGroup:insert(planet1)
 
     planet1:toBack()

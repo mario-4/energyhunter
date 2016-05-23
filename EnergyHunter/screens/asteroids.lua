@@ -69,6 +69,24 @@ function cleanUp()
     
     Runtime:removeEventListener( "enterFrame", frameUpdate )
     timer.cancel(tmrGameLoop)
+    for i=1,group.numChildren do
+        local child = group[i]
+        if(child~=nil) then
+    
+            group:remove(child)
+            
+        end
+        
+    end
+    for i=1,numAsteroids do
+        local child = asteroidsTable[i]
+        if(child~=nil) then
+           display:remove(child)
+           child=nil           
+        end
+        
+    end
+
 end
 
 function initGame()

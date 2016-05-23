@@ -75,8 +75,8 @@ function scene:show( event )
     elseif ( phase == "did" ) then      -- Scene is fully shown on the screen
 
     	--You can remove other scenes but use it if you know what you're doing.
-    	composer.removeScene( "screens.gameLevel" )		-- This will destroy "gameLevel" scene.
-    	composer.removeScene( "screens.creditScreen" )	-- This will destroy "creditScreen" scene.
+    	composer.removeScene( "screens.scene1" )		-- This will destroy "gameLevel" scene.
+    	
     end
 end
 
@@ -87,7 +87,7 @@ function scene:hide( event )
     if ( phase == "will" ) then         -- Scene is not off the screen entirely
 
     elseif ( phase == "did" ) then      -- Scene is off the screen
-
+    	composer.removeScene("screens.vencedor")
     end
 end
 
