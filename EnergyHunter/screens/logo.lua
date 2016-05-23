@@ -22,7 +22,7 @@ local function cleanUp()
 end
 
 local function changeScene()
-    composer.gotoScene( "screens.mainMenu", "crossFade", 500 )
+    composer.gotoScene( "screens.levels", "crossFade", 500 )
 end
 
 function scene:create( event )

@@ -5,6 +5,7 @@ local pex = require "libraries.pex"
 local particle = pex.load("assets/particles/particle.pex","assets/particles/texture.png")
 local timerMove
 local timerDecrease
+local timerMinifires
 local initialEmissionRate
 isAbsorbing=false
 local canAbsorve=false
@@ -52,8 +53,9 @@ particleDesigner.init = function()
 
 	initMovement()
 	initialEmissionRate=emitterPrincipal.emissionRateInParticlesPerSeconds
-	timer.performWithDelay(math.random(4000,10000),initChildrens,0)
+	timerMinifires=timer.performWithDelay(math.random(4000,10000),initChildrens,0)
 
+	Runtime:addEventListener( "enterFrame", checkDistance )
 	return g
 end
 
@@ -90,7 +92,7 @@ particleDesigner.init_stop_decreasing_rate_emitter = function()
 			radial.x=g.x-80
 	    	radial.y=g.y
 			timerDecrease = timer.performWithDelay(500,decrease_rate,0)
-			print(g)
+			
 			isAbsorbing=true
 		else
 			timer.cancel(timerDecrease)
@@ -130,7 +132,7 @@ function decrease_rate( )
 end
 
 particleDesigner.getEmissionRate = function ()
-	print(emitterPrincipal.emissionRateInParticlesPerSeconds/initialEmissionRate)
+	
 	return emitterPrincipal.emissionRateInParticlesPerSeconds/initialEmissionRate
 end
 
@@ -147,17 +149,17 @@ end
 function move()
 
 	local emitterY = g.y
+	if(g~=nil) then
+		g:setLinearVelocity(0,math.random(-500,500))
 
-	g:setLinearVelocity(0,math.random(-500,500))
+		if(emitterY <= originY) then 
+			g:applyForce(0,200,g.x,g.y)
+		end  
 
-	if(emitterY <= originY) then 
-		g:applyForce(0,200,g.x,g.y)
-	end  
-
-	if(emitterY >= finalY) then 
-		g:applyForce(0,-200,g.x,g.y)
-	end  
-
+		if(emitterY >= finalY) then 
+			g:applyForce(0,-200,g.x,g.y)
+		end  
+	end
 end
 
 function initChildrens()
@@ -208,13 +210,17 @@ function stopMovement()
     timer.cancel(timerMove)
 end
 
-Runtime:addEventListener( "enterFrame", checkDistance )
 
-particleDesigner.cleanUp=function ( )
-	
-	
+function stopMovementMiniFires()
+    timer.cancel(timerMinifires)
+end
+
+
+particleDesigner.cleanUp=function ( )		
 	Runtime:removeEventListener( "enterFrame", checkDistance )
-
+	stopMovement()
+	stopMovementMiniFires()
+	print("limpou particledsigner")
 end
 
 return particleDesigner

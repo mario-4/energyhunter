@@ -6,6 +6,7 @@ local scene = composer.newScene()           -- Created a new scene
 local widget = require ("widget")			-- Included the Widget library for buttons, tabs, sliders and many more
 											-- Please refer to -> http://docs.coronalabs.com/api/library/widget/index.html
 
+
 local mainGroup         -- Our main display group. We will add display elements to this group so Composer will handle these elements for us.
 -- For more information about groups, please refer to this guide -> http://docs.coronalabs.com/guide/graphics/group.html
 
@@ -88,8 +89,8 @@ function scene:show( event )
     elseif ( phase == "did" ) then      -- Scene is fully shown on the screen
 
     	--You can remove other scenes but use it if you know what you're doing.
-    	--composer.removeScene( "screens.gameLevel" )		-- This will destroy "gameLevel" scene.
-    	--composer.removeScene( "screens.creditScreen" )	-- This will destroy "creditScreen" scene.
+    	composer.removeScene( "screens.gameLevel" )		-- This will destroy "gameLevel" scene.
+    	composer.removeScene( "screens.creditScreen" )	-- This will destroy "creditScreen" scene.
     end
 end
 

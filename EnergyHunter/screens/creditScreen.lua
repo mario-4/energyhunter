@@ -11,7 +11,7 @@ local mainGroup         -- Our main display group. We will add display elements 
 -- You need to follow visibility rules or forward reference your variables and methods
 local function changeScene (event)
 	if ( event.phase == "ended" ) then
-		composer.gotoScene( "screens.mainMenu", "crossFade", 1000 )
+		composer.gotoScene( "screens.levels", "crossFade", 1000 )
 	end
 	return true 		-- To prevent more than one click
 

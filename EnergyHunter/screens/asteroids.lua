@@ -19,14 +19,16 @@ function loadAsteroids()
 
     asteroidsTable[numAsteroids].x = display.contentWidth+20
     asteroidsTable[numAsteroids].y = (math.random(display.contentHeight))
-    asteroidsTable[numAsteroids].gravityScale=0
+    asteroidsTable[numAsteroids].gravityScale=math.random(-4,8)
     asteroidsTable[numAsteroids].isSensor=true
-    --math.random(-4,10)
+    
     local asteroid=asteroidsTable[numAsteroids]
     asteroid.rotation=0.002
 
     group:insert(asteroid)
     asteroid:setLinearVelocity(50*2,0)
+
+
 end  
 
 function frameUpdate()
@@ -51,7 +53,6 @@ function frameUpdate()
     end
 end
 
-Runtime:addEventListener( "enterFrame", frameUpdate )
 
 function getDeltaTime()
     local temp = system.getTimer()  -- Get current game time in ms
@@ -61,10 +62,7 @@ function getDeltaTime()
 end
 
 local function gameLoop() 
-    if(not win) then
-
         loadAsteroids() 
-    end
 end 
 
 function cleanUp()
@@ -73,4 +71,8 @@ function cleanUp()
     timer.cancel(tmrGameLoop)
 end
 
-tmrGameLoop=timer.performWithDelay(tick, gameLoop,0) 
+function initGame()
+    tmrGameLoop=timer.performWithDelay(tick, gameLoop,0) 
+
+    Runtime:addEventListener( "enterFrame", frameUpdate )
+end

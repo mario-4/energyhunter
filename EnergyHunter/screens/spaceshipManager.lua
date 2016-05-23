@@ -1,10 +1,13 @@
 module(..., package.seeall) 
 
+
+math2d = require "plugin.math2d"
+
+
 local energy=0
 local powerActives={}
 local lives=3
 local MyName="starFighter"
-local spaceshipLocal
 local runtimeAcceleration = 0
  _W = display.contentCenterX
  _H = display.contentCenterY
@@ -14,69 +17,73 @@ local runtimeAcceleration = 0
  _OY = display.screensOriginY
 
 function cleanUp()
-    if(spaceshipLocal.accelerating==false) then
+    if(spaceship.accelerating==true) then
         Runtime:removeEventListener("enterFrame",desaccelerate)
-
+        print("limpou space")
     end
     Runtime:removeEventListener("touch",onTouch)
+    --display.remove(spaceship)
+    --physics.removeBody(spaceship)
+    print("limpou space")
 end
 
 
 function createSpaceShip(energy,score,powerActives,linearDamping,angularDamping,lives,sizeX,sizeY)
 
-	spaceshipLocal = display.newImageRect("assets/spaceship.png",sizeX,sizeY)
-	physics.addBody( spaceshipLocal )
-	spaceshipLocal.myName="starFighter"
-	spaceshipLocal.linearDamping=3
-    spaceshipLocal.angularDamping=30
-    spaceshipLocal.energy=energy
-    spaceshipLocal.lives=lives
-    spaceshipLocal.powerActives=powerActives
-    spaceshipLocal.score=score
-    spaceshipLocal.died=false
-	spaceshipLocal.tx=0
-    spaceshipLocal.ty=0
-    spaceshipLocal.x=_W-400
-    spaceshipLocal.y=_H
-    spaceshipLocal.isSensor=true
-    spaceshipLocal.initialX=spaceshipLocal.x
-    spaceshipLocal.accelerating=false
-    spaceshipLocal:toFront()
+	physics.addBody( spaceship )
+	spaceship.myName="starFighter"
+	spaceship.linearDamping=2.3
+    spaceship.angularDamping=100
+    spaceship.energy=energy
+    spaceship.lives=lives
+    spaceship.powerActives=powerActives
+    spaceship.score=score
+    spaceship.died=false
+	spaceship.tx=0
+    spaceship.ty=0
+    spaceship.x=_W-400
+    spaceship.y=_H
+    spaceship.isSensor=true
+    spaceship.initialX=spaceship.x
+    spaceship.accelerating=false
+    spaceship:toFront()
 
     Runtime:addEventListener("touch", onTouch )
     
-    return spaceshipLocal
 end
 
 function onTouch(event)
         
-    if event.phase == "began" or event.phase == "moved" then
-        local  y = event.y
-        local  ty =  y-spaceshipLocal.y -- calcula as novas coordenadas
+    if event.phase == "began" then
+        local  ty =  event.y-spaceship.y -- calcula as novas coordenadas
+        local tx  =  event.x-spaceship.x
         local sppedMultiplier = 2 -- muda a velocidade da nave
+        spaceship:setLinearVelocity(0,ty*sppedMultiplier)
+        
+        --local dest = math2d.diff(spaceship,event)
+        --dest = math2d.normalize(dest)
+        --dest = math2d.scale( dest, 950 )
+        --spaceship:setLinearVelocity(0,dest.y)
 
-        --Seta o destino da nave
-        spaceshipLocal.ty = y
 
-        spaceshipLocal:setLinearVelocity(0,ty*sppedMultiplier)
         
     end
  end
 
 function weDied()  -- pisca a nova nave 
-    transition.to(spaceshipLocal, {alpha=1, timer=200})  
-    spaceshipLocal.died=false 
+    transition.to(spaceship, {alpha=1, timer=200})  
+    spaceship.died=false 
 end 
 
 
 function accelerate()
 
-	if spaceshipLocal.energy>0 then
+	if spaceship.energy>0 then
 
-		spaceshipLocal.tx = 400 
-	    spaceshipLocal:setLinearVelocity(spaceshipLocal.tx*2,0)
-        spaceshipLocal.accelerating=true
-		spaceshipLocal.energy= spaceshipLocal.energy-0.5
+		spaceship.tx = 400 
+	    spaceship:setLinearVelocity(spaceship.tx*2,0)
+        spaceship.accelerating=true
+		spaceship.energy= spaceship.energy-0.5
         timer.performWithDelay(1000,desaccelerateCallBack,1)
         --desaccelerateCallBack()
 	end
@@ -84,10 +91,10 @@ function accelerate()
 end
 
 function desaccelerateCallBack(  )
-    if(spaceshipLocal.accelerating==false) then
+    if(spaceship.accelerating==false) then
         Runtime:removeEventListener("enterFrame",desaccelerate)
     else
-        spaceshipLocal.accelerating=true
+        spaceship.accelerating=true
         Runtime:addEventListener("enterFrame",desaccelerate)
         runtimeAcceleration=0
     end
@@ -96,14 +103,16 @@ end
 function desaccelerate()
    
     dt=getDeltaTimeSpaceShip()
-
-    if(spaceshipLocal.initialX<=spaceshipLocal.x) then
-        spaceshipLocal:translate(-0.2,0)
-    else
-        spaceshipLocal.accelerating=false
-        Runtime:removeEventListener("enterFrame",desaccelerate)
-        runtimeAcceleration=0
-    end   
+    print(spaceship)
+    if (spaceship.initialX ~= nil and spaceship.x~=nil) then
+        if(spaceship.initialX<=spaceship.x) then
+            spaceship:translate(-0.2,0)
+        else
+            spaceship.accelerating=false
+            Runtime:removeEventListener("enterFrame",desaccelerate)
+            runtimeAcceleration=0
+        end   
+    end
 end
 
 function getDeltaTimeSpaceShip()

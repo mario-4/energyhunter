@@ -6,6 +6,7 @@ local scene = composer.newScene()           -- Created a new scene
 local widget = require ("widget")			-- Included the Widget library for buttons, tabs, sliders and many more
 											-- Please refer to -> http://docs.coronalabs.com/api/library/widget/index.html
 
+
 local mainGroup         -- Our main display group. We will add display elements to this group so Composer will handle these elements for us.
 -- For more information about groups, please refer to this guide -> http://docs.coronalabs.com/guide/graphics/group.html
 
@@ -43,10 +44,10 @@ function scene:create( event )
     mainGroup:insert(menubg)
     ]]--
 
-    local back =display.newImage("assets/gui/greenback.png")
+    local back =display.newImage("assets/gui/redback.png")
     back.x=500
     back.y=500
-    local message =display.newImage("assets/gui/modalInformation.png")
+    local message =display.newImage("assets/gui/modalFailed.png")
     message.x=display.contentCenterX
     message.y=display.contentCenterY
     mainGroup:insert(back)
@@ -54,10 +55,10 @@ function scene:create( event )
 
     local buttonNewGame = widget.newButton{		-- Creating a new button
         id="newGame",
-        x= display.contentCenterX,
+        x= display.contentCenterX-150,
         y=650,
-        defaultFile = "assets/gui/init.png",
-        overFile = "assets/gui/initClicked.png",
+        defaultFile = "assets/gui/buttonAbort.png",
+        overFile = "assets/gui/buttonAbort.png",
         onEvent = onButtonRelease		-- This function will be called when the button is pressed
     }
 
@@ -65,17 +66,13 @@ function scene:create( event )
 
     local buttonCredits = widget.newButton{		-- Creating a new button
         id = "credits",			-- Give an ID to identify the button in onButtonRelease()
-        
-        font = native.systemFontBold,
-        fontSize = 64,
-        labelColor = { default = { 1, 1, 1 }, over = { 0, 0, 0 } },
-        textOnly = true,		-- Comment this line out when your want background for a button
-        width = 250,
-        height = 92,
-        onEvent = onButtonRelease		-- This function will be called when the button is pressed
+        x= display.contentCenterX+150,
+        y=650,
+        defaultFile = "assets/gui/buttonRestart.png",
+        overFile = "assets/gui/buttonRestart.png",
+        onEvent = onButtonRelease       -- This function will be called when the button is pressed
     }
-    buttonCredits.x = display.contentCenterX
-    buttonCredits.y = 450
+
     mainGroup:insert(buttonCredits)
 end
 
@@ -90,6 +87,7 @@ function scene:show( event )
     	--You can remove other scenes but use it if you know what you're doing.
     	--composer.removeScene( "screens.gameLevel" )		-- This will destroy "gameLevel" scene.
     	--composer.removeScene( "screens.creditScreen" )	-- This will destroy "creditScreen" scene.
+         composer.removeScene( "screens.scene1" )
     end
 end
 
@@ -100,7 +98,7 @@ function scene:hide( event )
     if ( phase == "will" ) then         -- Scene is not off the screen entirely
 
     elseif ( phase == "did" ) then      -- Scene is off the screen
-
+        composer.removeScene("screens.derrotado")
     end
 end
 

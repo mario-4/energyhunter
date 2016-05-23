@@ -19,6 +19,7 @@ settings =
         --googlePlayGamesAppId = "longAppID",  --long App ID number (use yours!)
         usesPermissions = {
             "android.permission.INTERNET",
+            "android.permission.VIBRATE",
         },
     },
 

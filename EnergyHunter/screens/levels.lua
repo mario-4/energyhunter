@@ -6,6 +6,10 @@ local scene = composer.newScene()           -- Created a new scene
 local widget = require ("widget")			-- Included the Widget library for buttons, tabs, sliders and many more
 											-- Please refer to -> http://docs.coronalabs.com/api/library/widget/index.html
 
+local stars = require("screens.stars")
+
+stars.startSpace()
+
 local mainGroup         -- Our main display group. We will add display elements to this group so Composer will handle these elements for us.
 -- For more information about groups, please refer to this guide -> http://docs.coronalabs.com/guide/graphics/group.html
 
@@ -19,7 +23,8 @@ local function onButtonRelease (event)		-- This function will be called when the
     	print "event ended"
 
         if ( event.target.id == "newGame" ) then
-            composer.gotoScene( "screens.scene1", "crossFade", 1000 )
+            composer.gotoScene( "screens.mainMenu", "crossFade", 1000 )
+
         elseif ( event.target.id == "credits" ) then
             composer.gotoScene( "screens.creditScreen", "crossFade", 1000 )
         end
@@ -42,41 +47,61 @@ function scene:create( event )
     menubg.y = display.contentCenterY
     mainGroup:insert(menubg)
     ]]--
-
-    local back =display.newImage("assets/gui/greenback.png")
-    back.x=500
-    back.y=500
-    local message =display.newImage("assets/gui/modalInformation.png")
+     local message =display.newImage("assets/gui/levels.png")
     message.x=display.contentCenterX
-    message.y=display.contentCenterY
-    mainGroup:insert(back)
+    message.y=display.contentCenterY-280
+
     mainGroup:insert(message)
 
-    local buttonNewGame = widget.newButton{		-- Creating a new button
+    local buttonLevel1 = widget.newButton{		-- Creating a new button
         id="newGame",
         x= display.contentCenterX,
-        y=650,
-        defaultFile = "assets/gui/init.png",
-        overFile = "assets/gui/initClicked.png",
+        y=600,
+        defaultFile = "assets/gui/level.png",
+        overFile = "assets/gui/level.png",
         onEvent = onButtonRelease		-- This function will be called when the button is pressed
     }
 
-    mainGroup:insert(buttonNewGame)
+    mainGroup:insert(buttonLevel1)
 
-    local buttonCredits = widget.newButton{		-- Creating a new button
-        id = "credits",			-- Give an ID to identify the button in onButtonRelease()
+    local buttonLevel2 = widget.newButton{		-- Creating a new button
+        id = "level2",			-- Give an ID to identify the button in onButtonRelease()
         
-        font = native.systemFontBold,
-        fontSize = 64,
-        labelColor = { default = { 1, 1, 1 }, over = { 0, 0, 0 } },
-        textOnly = true,		-- Comment this line out when your want background for a button
-        width = 250,
-        height = 92,
-        onEvent = onButtonRelease		-- This function will be called when the button is pressed
+        x= display.contentCenterX-180,
+        y=410,
+        defaultFile = "assets/gui/level2.png",
+        overFile = "assets/gui/level2.png",
+        onEvent = onButtonRelease   		-- This function will be called when the button is pressed
     }
-    buttonCredits.x = display.contentCenterX
-    buttonCredits.y = 450
+
+    mainGroup:insert(buttonLevel2)
+
+
+    local buttonLevel3 = widget.newButton{      -- Creating a new button
+        id = "level3",          -- Give an ID to identify the button in onButtonRelease()
+        
+        x= display.contentCenterX-20,
+        y=270,
+        defaultFile = "assets/gui/level3.png",
+        overFile = "assets/gui/level3.png",
+        onEvent = onButtonRelease           -- This function will be called when the button is pressed
+    }
+    mainGroup:insert(buttonLevel3)
+    local buttonCredits = widget.newButton{      -- Creating a new button
+        id = "credits",          -- Give an ID to identify the button in onButtonRelease()
+        
+        x= display.contentCenterX+500,
+        y=80,
+        defaultFile = "assets/gui/pause.png",
+        overFile = "assets/gui/pause.png",
+        onEvent = onButtonRelease           -- This function will be called when the button is pressed
+    }
+
+
     mainGroup:insert(buttonCredits)
+
+
+
 end
 
 
