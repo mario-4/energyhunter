@@ -90,7 +90,7 @@ function scene:create( event )
         sheetContentWidth = 330,
         sheetContentHeight = 30
     }
-    local progressSheetMyEnergy = graphics.newImageSheet( "assets/gui/myenergybar.png", optionsMyEnergy )
+    local progressSheetMyEnergy = graphics.newImageSheet( "assets/gui/energybar2.png", optionsMyEnergy )
 
 
 
@@ -218,7 +218,7 @@ function scene:create( event )
             --sceneGroup:insert(win)
             composer.removeScene( "screens.scene1" )
             timer.cancel(tmrPontuacao)
-            composer.gotoScene( "screens.conclusao", "crossFade", 1500 )
+            composer.gotoScene( "screens.vencedor", "crossFade", 1500 )
         end
          
     end  

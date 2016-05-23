@@ -13,13 +13,13 @@ local group=display.newGroup()
 
 function loadAsteroids()
     numAsteroids= numAsteroids +1 
-    asteroidsTable[numAsteroids] = display.newImageRect("assets/asteroids/meteor3.png",50,50) 
+    asteroidsTable[numAsteroids] = display.newImageRect("assets/asteroids/ast"..math.random(1,7)..".png",math.random(50,100),math.random(50,100)) 
     asteroidsTable[numAsteroids].myName="asteroid"
     physics.addBody(asteroidsTable[numAsteroids],{density=1,friction=0.4,bounce=1})
 
     asteroidsTable[numAsteroids].x = display.contentWidth+20
     asteroidsTable[numAsteroids].y = (math.random(display.contentHeight))
-    asteroidsTable[numAsteroids].gravityScale=math.random(-4,8)
+    asteroidsTable[numAsteroids].gravityScale=math.random(-2,6)
     asteroidsTable[numAsteroids].isSensor=true
     
     local asteroid=asteroidsTable[numAsteroids]

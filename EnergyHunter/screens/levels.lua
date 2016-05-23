@@ -47,6 +47,24 @@ function scene:create( event )
     menubg.y = display.contentCenterY
     mainGroup:insert(menubg)
     ]]--
+    _W = display.contentCenterX
+    _H = display.contentCenterY
+    local planet1 = display.newImage("assets/background/planet"..math.random(1,4)..".png",_W+200,_H-150)
+    mainGroup:insert(planet1)
+
+    planet1:toBack()
+
+    function planet1:enterFrame()
+
+        self:translate(-0.1,0)
+        if self.x <= -self.width then
+            Runtime:removeEventListener( "enterFrame", self )
+            display.remove(self)
+        end
+
+    end
+
+    Runtime:addEventListener("enterFrame",planet1 )
      local message =display.newImage("assets/gui/levels.png")
     message.x=display.contentCenterX
     message.y=display.contentCenterY-280

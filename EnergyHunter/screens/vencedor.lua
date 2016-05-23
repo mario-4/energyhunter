@@ -20,7 +20,7 @@ local function onButtonRelease (event)		-- This function will be called when the
     	print "event ended"
 
         if ( event.target.id == "newGame" ) then
-            composer.gotoScene( "screens.scene1", "crossFade", 1000 )
+            composer.gotoScene( "screens.levels", "crossFade", 1000 )
         elseif ( event.target.id == "credits" ) then
             composer.gotoScene( "screens.creditScreen", "crossFade", 1000 )
         end
@@ -47,7 +47,7 @@ function scene:create( event )
     local back =display.newImage("assets/gui/greenback.png")
     back.x=500
     back.y=500
-    local message =display.newImage("assets/gui/modalInformation.png")
+    local message =display.newImage("assets/gui/vencedor.png")
     message.x=display.contentCenterX
     message.y=display.contentCenterY
     mainGroup:insert(back)
@@ -57,27 +57,13 @@ function scene:create( event )
         id="newGame",
         x= display.contentCenterX,
         y=650,
-        defaultFile = "assets/gui/init.png",
-        overFile = "assets/gui/initClicked.png",
+        defaultFile = "assets/gui/buttonOk.png",
+        overFile = "assets/gui/buttonOk.png",
         onEvent = onButtonRelease		-- This function will be called when the button is pressed
     }
 
     mainGroup:insert(buttonNewGame)
 
-    local buttonCredits = widget.newButton{		-- Creating a new button
-        id = "credits",			-- Give an ID to identify the button in onButtonRelease()
-        
-        font = native.systemFontBold,
-        fontSize = 64,
-        labelColor = { default = { 1, 1, 1 }, over = { 0, 0, 0 } },
-        textOnly = true,		-- Comment this line out when your want background for a button
-        width = 250,
-        height = 92,
-        onEvent = onButtonRelease		-- This function will be called when the button is pressed
-    }
-    buttonCredits.x = display.contentCenterX
-    buttonCredits.y = 450
-    mainGroup:insert(buttonCredits)
 end
 
 

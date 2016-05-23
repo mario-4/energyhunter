@@ -220,6 +220,12 @@ particleDesigner.cleanUp=function ( )
 	Runtime:removeEventListener( "enterFrame", checkDistance )
 	stopMovement()
 	stopMovementMiniFires()
+	if(isAbsorbing) then
+		timer.cancel(timerDecrease)
+		display.remove(radial)
+		radial=null
+		isAbsorbing=false
+	end
 	print("limpou particledsigner")
 end
 

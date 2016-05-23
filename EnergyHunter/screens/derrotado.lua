@@ -22,7 +22,7 @@ local function onButtonRelease (event)		-- This function will be called when the
         if ( event.target.id == "newGame" ) then
             composer.gotoScene( "screens.scene1", "crossFade", 1000 )
         elseif ( event.target.id == "credits" ) then
-            composer.gotoScene( "screens.creditScreen", "crossFade", 1000 )
+            composer.gotoScene( "screens.levels", "crossFade", 1000 )
         end
     end
     return true 		-- To prevent more than one click
@@ -57,8 +57,8 @@ function scene:create( event )
         id="newGame",
         x= display.contentCenterX-150,
         y=650,
-        defaultFile = "assets/gui/buttonAbort.png",
-        overFile = "assets/gui/buttonAbort.png",
+        defaultFile = "assets/gui/buttonRestart.png",
+        overFile = "assets/gui/buttonRestart.png",
         onEvent = onButtonRelease		-- This function will be called when the button is pressed
     }
 
@@ -68,8 +68,8 @@ function scene:create( event )
         id = "credits",			-- Give an ID to identify the button in onButtonRelease()
         x= display.contentCenterX+150,
         y=650,
-        defaultFile = "assets/gui/buttonRestart.png",
-        overFile = "assets/gui/buttonRestart.png",
+        defaultFile = "assets/gui/buttonAbort.png",
+        overFile = "assets/gui/buttonAbort.png",
         onEvent = onButtonRelease       -- This function will be called when the button is pressed
     }
 
